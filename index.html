@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#111111" />
+    <title>楽曲パートプレイヤー</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="player" aria-labelledby="song-title">
+        <header class="topbar">
+          <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+          <p>SECTION PLAYER</p>
+          <span class="ready">READY</span>
+        </header>
+
+        <nav class="song-selector" id="song-selector" aria-label="楽曲選択"></nav>
+
+        <div class="player-layout">
+          <section class="now-playing" aria-label="再生中の楽曲">
+            <div class="artwork" id="artwork" aria-hidden="true">
+              <div class="disc"><span></span></div>
+              <div class="sound-bars" id="sound-bars"></div>
+            </div>
+
+            <div class="song-copy">
+              <p class="eyebrow">NOW PLAYING</p>
+              <h1 id="song-title">楽曲タイトル</h1>
+              <p id="song-subtitle">パート確認用プレイヤー</p>
+            </div>
+
+            <p class="live-status" id="status" aria-live="polite">
+              <span></span>再生する音源を選んでください
+            </p>
+          </section>
+
+          <section class="controls-panel" aria-label="音楽プレイヤー">
+            <audio id="audio" preload="metadata"></audio>
+
+            <button class="full-track active" id="full-track" type="button">
+              <span class="track-number">ALL</span>
+              <span class="track-copy"><strong>フル音源</strong><small>最初から最後まで再生</small></span>
+              <span class="round-play" aria-hidden="true"><i class="play-icon"></i></span>
+            </button>
+
+            <div class="timeline-block">
+              <input id="seekbar" type="range" min="0" max="72" step="0.01" value="0" aria-label="再生位置" />
+              <div class="time-row">
+                <time id="current-time">0:00</time>
+                <span id="active-label">フル音源</span>
+                <time id="duration">0:00</time>
+              </div>
+            </div>
+
+            <div class="transport" aria-label="再生操作">
+              <button id="back" type="button" aria-label="10秒戻る"><b>10</b><span>↶</span></button>
+              <button id="main-play" class="main-play" type="button" aria-label="再生"><i class="play-icon"></i></button>
+              <button id="forward" type="button" aria-label="10秒進む"><b>10</b><span>↷</span></button>
+            </div>
+
+            <div class="section-heading">
+              <div><p class="eyebrow">SONG SECTIONS</p><h2>聴きたいパート</h2></div>
+              <p>タップすると区間再生</p>
+            </div>
+
+            <div class="section-grid" id="section-grid"></div>
+          </section>
+        </div>
+
+        <footer>
+          <p>SPACEキーでも再生、一時停止できます</p>
+          <p id="audio-path"></p>
+        </footer>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
