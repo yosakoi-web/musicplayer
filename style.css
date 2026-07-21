@@ -19,7 +19,7 @@ body {
   font-family: "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", Meiryo, Arial, sans-serif;
 }
 
-button, input { font: inherit; }
+button, input, select { font: inherit; }
 button { color: inherit; }
 
 .page-shell {
@@ -75,48 +75,44 @@ button { color: inherit; }
   content: "";
 }
 
-.song-selector {
+.song-picker {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 14px 24px;
+  align-items: center;
+  padding: 22px 28px;
   border-bottom: 1px solid var(--line);
-  background: rgba(255,255,255,.012);
+  background: rgba(255,255,255,.018);
 }
 
-.song-selector button {
-  position: relative;
+.song-picker-title { display: flex; flex-direction: column; gap: 5px; }
+.song-picker-title label { font-size: 17px; font-weight: 750; }
+.song-picker-controls { display: grid; grid-template-columns: 112px minmax(0,1fr) 112px; gap: 10px; min-width: 0; }
+
+.song-step {
   display: flex;
-  min-width: 0;
-  min-height: 72px;
-  flex-direction: column;
+  min-height: 58px;
+  align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 13px 16px;
-  border: 0;
-  border-right: 1px solid var(--line);
-  background: transparent;
-  text-align: left;
+  gap: 7px;
+  padding: 0 14px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: #242424;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
 }
 
-.song-selector button:last-child { border-right: 0; }
+.song-step span { color: var(--accent); font-size: 27px; font-weight: 400; line-height: 1; }
+.song-step:hover, .song-step:focus-visible { border-color: var(--accent); background: #2a2524; outline: none; }
+.song-step:disabled { border-color: rgba(255,255,255,.07); background: rgba(255,255,255,.02); color: #5d5955; cursor: not-allowed; }
+.song-step:disabled span { color: #5d5955; }
 
-.song-selector button::after {
-  position: absolute;
-  right: 16px;
-  bottom: 0;
-  left: 16px;
-  height: 2px;
-  background: transparent;
-  content: "";
-}
-
-.song-selector button:hover,
-.song-selector button:focus-visible,
-.song-selector button.active { background: rgba(255,255,255,.035); outline: none; }
-.song-selector button.active::after { background: var(--accent); }
-.song-selector button span { color: #6f6b66; font-family: monospace; font-size: 8px; }
-.song-selector button.active span { color: var(--accent); }
-.song-selector button strong { overflow: hidden; font-size: 11px; line-height: 1.35; text-overflow: ellipsis; }
+.song-select-wrap { position: relative; min-width: 0; }
+.song-select-wrap select { width: 100%; height: 58px; padding: 0 52px 0 20px; border: 2px solid var(--accent); border-radius: 0; outline: none; appearance: none; background: #f5f1ea; color: #171717; font-size: 18px; font-weight: 750; cursor: pointer; }
+.song-select-wrap select:focus-visible { box-shadow: 0 0 0 4px rgba(255,114,94,.25); }
+.song-select-wrap > span { position: absolute; top: 50%; right: 20px; color: #171717; font-size: 25px; line-height: 1; pointer-events: none; transform: translateY(-55%); }
+.song-position { margin: 0; color: #aaa59f; font-size: 12px; font-weight: 650; white-space: nowrap; }
 
 .player-layout { display: grid; grid-template-columns: 0.85fr 1.15fr; min-height: 690px; }
 
@@ -244,9 +240,8 @@ footer p { margin: 0; }
 @media (max-width: 840px) {
   .page-shell { padding: 18px; }
   .player-layout { grid-template-columns: 1fr; }
-  .song-selector { display: flex; overflow-x: auto; scrollbar-width: none; }
-  .song-selector::-webkit-scrollbar { display: none; }
-  .song-selector button { width: 176px; min-width: 176px; }
+  .song-picker { grid-template-columns: 1fr auto; }
+  .song-picker-controls { grid-column: 1 / -1; grid-row: 2; }
   .now-playing { display: grid; grid-template-columns: 140px 1fr; gap: 25px; align-items: center; padding: 34px; border-right: 0; border-bottom: 1px solid var(--line); }
   .song-copy { margin-top: 0; }
   .live-status { grid-column: 1 / -1; margin-top: 0; }
@@ -257,6 +252,12 @@ footer p { margin: 0; }
   .page-shell { padding: 0; }
   .player { min-height: 100svh; border: 0; }
   .topbar { height: 58px; padding: 0 20px; }
+  .song-picker { gap: 12px; padding: 20px; }
+  .song-picker-title label { font-size: 18px; }
+  .song-picker-controls { grid-template-columns: 1fr 1fr; }
+  .song-select-wrap { grid-column: 1 / -1; grid-row: 1; }
+  .song-step { min-height: 54px; font-size: 15px; }
+  .song-select-wrap select { height: 62px; padding-left: 16px; font-size: 17px; }
   .now-playing { grid-template-columns: 92px 1fr; gap: 18px; padding: 26px 20px; }
   .song-copy h1 { font-size: 23px; }
   .controls-panel { padding: 28px 20px 34px; }

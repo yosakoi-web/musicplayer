@@ -16,7 +16,29 @@
           <span class="ready">READY</span>
         </header>
 
-        <nav class="song-selector" id="song-selector" aria-label="楽曲選択"></nav>
+        <section class="song-picker" aria-labelledby="song-picker-title">
+          <div class="song-picker-title">
+            <p class="eyebrow">SONG SELECT</p>
+            <label id="song-picker-title" for="song-select">曲目を選ぶ</label>
+          </div>
+
+          <div class="song-picker-controls">
+            <button class="song-step" id="previous-song" type="button">
+              <span aria-hidden="true">‹</span>前の曲
+            </button>
+
+            <div class="song-select-wrap">
+              <select id="song-select" aria-describedby="song-position"></select>
+              <span aria-hidden="true">⌄</span>
+            </div>
+
+            <button class="song-step" id="next-song" type="button">
+              次の曲<span aria-hidden="true">›</span>
+            </button>
+          </div>
+
+          <p class="song-position" id="song-position"></p>
+        </section>
 
         <div class="player-layout">
           <section class="now-playing" aria-label="再生中の楽曲">

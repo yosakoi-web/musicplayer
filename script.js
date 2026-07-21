@@ -39,8 +39,50 @@ const SONGS = [
   },
   {
     id: "harukoma",
-    title: "春駒",
-    audioFile: "music/春駒.mp3",
+    title: "春駒わっしょい",
+    audioFile: "music/春駒わっしょい.mp3",
+    sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
+  },
+  {
+    id: "saika",
+    title: "祭花",
+    audioFile: "music/祭花.mp3",
+    sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
+  },
+  {
+    id: "nanchu-soran",
+    title: "南中ソーラン",
+    audioFile: "music/南中ソーラン.mp3",
+    sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
+  },
+  {
+    id: "gifu-ima-kokode",
+    title: "GIFU 今ここで",
+    audioFile: "music/GIFU 今ここで.mp3",
+    sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
+  },
+  {
+    id: "yocchore",
+    title: "よっちょれ",
+    audioFile: "music/よっちょれ.mp3",
+    sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
+  },
+  {
+    id: "dancing-hero",
+    title: "ダンシングヒーロー",
+    audioFile: "music/ダンシングヒーロー.mp3",
+    sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
+  },
+  {
+    id: "uraja-ondo",
+    title: "うらじゃ音頭",
+    audioFile: "music/うらじゃ音頭.mp3",
+    sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
+  },
+  {
+    id: "sekai-ni-hitotsudake-no-hana",
+    title: "世界に一つだけの花",
+    audioFile: "music/世界に一つだけの花.mp3",
     sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
   },
 ];
@@ -55,7 +97,10 @@ const artwork = document.querySelector("#artwork");
 const fullTrack = document.querySelector("#full-track");
 const mainPlay = document.querySelector("#main-play");
 const sectionGrid = document.querySelector("#section-grid");
-const songSelector = document.querySelector("#song-selector");
+const songSelect = document.querySelector("#song-select");
+const previousSong = document.querySelector("#previous-song");
+const nextSong = document.querySelector("#next-song");
+const songPosition = document.querySelector("#song-position");
 
 let activeSongIndex = 0;
 let activeId = "full";
@@ -68,12 +113,10 @@ for (let index = 0; index < 22; index += 1) {
 }
 
 SONGS.forEach((song, index) => {
-  const button = document.createElement("button");
-  button.type = "button";
-  button.dataset.songIndex = index;
-  button.innerHTML = `<span>${String(index + 1).padStart(2, "0")}</span><strong>${song.title}</strong>`;
-  button.addEventListener("click", () => selectSong(index));
-  songSelector.append(button);
+  const option = document.createElement("option");
+  option.value = String(index);
+  option.textContent = `${index + 1}. ${song.title}`;
+  songSelect.append(option);
 });
 
 function formatTime(seconds) {
@@ -157,11 +200,10 @@ function selectSong(index, initial = false) {
   audio.src = song.audioFile;
   audio.load();
 
-  document.querySelectorAll("#song-selector button").forEach((button) => {
-    const selected = Number(button.dataset.songIndex) === activeSongIndex;
-    button.classList.toggle("active", selected);
-    button.setAttribute("aria-pressed", String(selected));
-  });
+  songSelect.value = String(activeSongIndex);
+  previousSong.disabled = activeSongIndex === 0;
+  nextSong.disabled = activeSongIndex === SONGS.length - 1;
+  songPosition.textContent = `${activeSongIndex + 1}曲目／全${SONGS.length}曲`;
 
   renderSections();
   setPlayingUi(false);
@@ -273,6 +315,9 @@ audio.addEventListener("error", () => {
 
 fullTrack.addEventListener("click", selectFullTrack);
 mainPlay.addEventListener("click", togglePlayback);
+songSelect.addEventListener("change", () => selectSong(Number(songSelect.value)));
+previousSong.addEventListener("click", () => selectSong(activeSongIndex - 1));
+nextSong.addEventListener("click", () => selectSong(activeSongIndex + 1));
 seekbar.addEventListener("input", () => seekTo(Number(seekbar.value)));
 document.querySelector("#back").addEventListener("click", () => seekTo(audio.currentTime - 10));
 document.querySelector("#forward").addEventListener("click", () => seekTo(audio.currentTime + 10));
