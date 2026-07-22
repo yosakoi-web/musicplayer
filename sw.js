@@ -1,4 +1,4 @@
-const CACHE_NAME = "practice-music-player-v2";
+const CACHE_NAME = "practice-music-player-v3";
 const APP_SHELL = ["./", "./index.html", "./style.css", "./app.js", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", (event) => {

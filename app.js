@@ -32,6 +32,7 @@ const audio = document.querySelector("#audio-player");
 
 let activeTrackId = null;
 let lastFocusedTrackId = null;
+let isScrubbing = false;
 
 function renderTracks() {
   trackGrid.replaceChildren();
@@ -67,8 +68,10 @@ async function openTrack(trackId) {
 
   try {
     await audio.play();
-  } catch {
-    playerMessage.textContent = "再生ボタンを押してください";
+  } catch (error) {
+    if (error?.name !== "AbortError") {
+      playerMessage.textContent = "再生ボタンを押してください";
+    }
   }
 
   updatePlayState();
@@ -97,8 +100,10 @@ async function togglePlayback() {
   if (audio.paused) {
     try {
       await audio.play();
-    } catch {
-      playerMessage.textContent = "この端末では再生を開始できませんでした";
+    } catch (error) {
+      if (error?.name !== "AbortError") {
+        playerMessage.textContent = "この端末では再生を開始できませんでした";
+      }
     }
   } else {
     audio.pause();
@@ -128,16 +133,38 @@ function updateTimeline() {
   const total = Number.isFinite(audio.duration) ? audio.duration : 0;
   const elapsed = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
   seekBar.max = total || 100;
-  seekBar.value = elapsed;
-  currentTime.textContent = formatTime(elapsed);
+  seekBar.disabled = total <= 0;
+
+  if (!isScrubbing) {
+    seekBar.value = elapsed;
+    currentTime.textContent = formatTime(elapsed);
+  }
+
   duration.textContent = formatTime(total);
 }
 
 function resetTimeline() {
   seekBar.max = 100;
   seekBar.value = 0;
+  seekBar.disabled = true;
   currentTime.textContent = "0:00";
   duration.textContent = "0:00";
+}
+
+function previewSeekPosition() {
+  isScrubbing = true;
+  currentTime.textContent = formatTime(Number(seekBar.value));
+}
+
+function commitSeekPosition() {
+  const target = Number(seekBar.value);
+
+  if (Number.isFinite(audio.duration) && Number.isFinite(target)) {
+    audio.currentTime = Math.min(Math.max(target, 0), audio.duration);
+  }
+
+  isScrubbing = false;
+  updateTimeline();
 }
 
 function keepFocusInDialog(event) {
@@ -162,11 +189,17 @@ closePlayerButton.addEventListener("click", closePlayer);
 modalBackdrop.addEventListener("click", closePlayer);
 playToggle.addEventListener("click", togglePlayback);
 seekBar.addEventListener("input", () => {
-  audio.currentTime = Number(seekBar.value);
+  previewSeekPosition();
+});
+seekBar.addEventListener("change", commitSeekPosition);
+seekBar.addEventListener("pointercancel", () => {
+  isScrubbing = false;
   updateTimeline();
 });
 
 audio.addEventListener("loadedmetadata", updateTimeline);
+audio.addEventListener("durationchange", updateTimeline);
+audio.addEventListener("canplay", updateTimeline);
 audio.addEventListener("timeupdate", updateTimeline);
 audio.addEventListener("play", () => {
   updatePlayState();

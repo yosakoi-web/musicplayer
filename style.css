@@ -356,6 +356,11 @@ h1 {
   cursor: pointer;
 }
 
+#seek-bar:disabled {
+  cursor: wait;
+  opacity: 0.5;
+}
+
 .time-row {
   display: flex;
   justify-content: space-between;
