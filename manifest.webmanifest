@@ -1,0 +1,19 @@
+{
+  "name": "練習用音楽プレーヤー",
+  "short_name": "練習プレーヤー",
+  "description": "端末内の音源を選んで使用する練習用音楽プレーヤー",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f8fa",
+  "theme_color": "#0b8f87",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
