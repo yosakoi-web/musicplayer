@@ -14,75 +14,75 @@ function createSections(
 
 const SONGS = [
   {
-    id: "toki-senpuka",
-    title: "土岐旋風歌",
-    audioFile: "music/土岐旋風歌.mp3",
-    sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
-  },
-  {
-    id: "toki-make-love-it-2023",
-    title: "toki make love it 2023",
-    audioFile: "music/toki make love it 2023.mp3",
+    id: "saika",
+    title: "祭花",
+    audioFile: "music/01 祭花.mp3",
     sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
   },
   {
     id: "jidai-ni-moete-koishigure",
     title: "時代(とき)に燃えて恋しぐれ",
-    audioFile: "music/時代(とき)に燃えて恋しぐれ.mp3",
+    audioFile: "music/02 時代(とき)に燃えて恋しぐれ.mp3",
     sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
   },
   {
-    id: "minamo-dance",
-    title: "ミナモダンス",
-    audioFile: "music/ミナモダンス.mp3",
+    id: "toki-make-love-it-2023",
+    title: "toki make love it 2023",
+    audioFile: "music/03 toki make love it 2023.mp3",
+    sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
+  },
+  {
+    id: "toki-senpuka",
+    title: "土岐旋風歌",
+    audioFile: "music/04 土岐旋風歌.mp3",
     sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
   },
   {
     id: "harukoma",
     title: "春駒わっしょい",
-    audioFile: "music/春駒わっしょい.mp3",
-    sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
-  },
-  {
-    id: "saika",
-    title: "祭花",
-    audioFile: "music/祭花.mp3",
+    audioFile: "music/05 春駒わっしょい.mp3",
     sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
   },
   {
     id: "nanchu-soran",
     title: "南中ソーラン",
-    audioFile: "music/南中ソーラン.mp3",
+    audioFile: "music/06 南中ソーラン.mp3",
     sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
   },
   {
     id: "gifu-ima-kokode",
     title: "GIFU 今ここで",
-    audioFile: "music/GIFU 今ここで.mp3",
+    audioFile: "music/07 GIFU 今ここで.mp3",
     sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
   },
   {
     id: "yocchore",
     title: "よっちょれ",
-    audioFile: "music/よっちょれ.mp3",
+    audioFile: "music/08 よっちょれ.mp3",
+    sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
+  },
+  {
+    id: "minamo-dance",
+    title: "ミナモダンス",
+    audioFile: "music/09 ミナモダンス.mp3",
     sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
   },
   {
     id: "dancing-hero",
     title: "ダンシングヒーロー",
-    audioFile: "music/ダンシングヒーロー.mp3",
+    audioFile: "music/10 ダンシングヒーロー.mp3",
     sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
   },
   {
     id: "uraja-ondo",
     title: "うらじゃ音頭",
-    audioFile: "music/うらじゃ音頭.mp3",
+    audioFile: "music/11 うらじゃ音頭.mp3",
     sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
   },
   {
     id: "sekai-ni-hitotsudake-no-hana",
     title: "世界に一つだけの花",
-    audioFile: "music/世界に一つだけの花.mp3",
+    audioFile: "music/12 世界に一つだけの花.mp3",
     sections: createSections([4, 18], [18, 32], [36, 50], [50, 68]),
   },
 ];
@@ -101,10 +101,16 @@ const songSelect = document.querySelector("#song-select");
 const previousSong = document.querySelector("#previous-song");
 const nextSong = document.querySelector("#next-song");
 const songPosition = document.querySelector("#song-position");
+const musicFolderInput = document.querySelector("#music-folder-input");
+const musicFolderButton = document.querySelector("#music-folder-button");
+const folderResult = document.querySelector("#folder-result");
 
 let activeSongIndex = 0;
 let activeId = "full";
 let sectionEnd = null;
+let folderHasBeenSelected = false;
+let objectUrls = [];
+const localAudioSources = new Map();
 
 for (let index = 0; index < 22; index += 1) {
   const bar = document.createElement("i");
@@ -124,6 +130,18 @@ function formatTime(seconds) {
   const minutes = Math.floor(seconds / 60);
   const rest = String(Math.floor(seconds % 60)).padStart(2, "0");
   return `${minutes}:${rest}`;
+}
+
+function musicFileName(song) {
+  return song.audioFile.split("/").pop() || "";
+}
+
+function normalizeFileName(name) {
+  return name.normalize("NFKC").replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+function audioSource(song) {
+  return localAudioSources.get(song.id) || song.audioFile;
 }
 
 function activeSong() {
@@ -196,8 +214,10 @@ function selectSong(index, initial = false) {
   const song = activeSong();
   document.querySelector("#song-title").textContent = song.title;
   document.querySelector("#song-subtitle").textContent = "パート確認用プレイヤー";
-  document.querySelector("#audio-path").textContent = `音源ファイル：${song.audioFile}`;
-  audio.src = song.audioFile;
+  document.querySelector("#audio-path").textContent = localAudioSources.has(song.id)
+    ? `選択したフォルダ：${musicFileName(song)}`
+    : `音源ファイル：${song.audioFile}`;
+  audio.src = audioSource(song);
   audio.load();
 
   songSelect.value = String(activeSongIndex);
@@ -207,10 +227,16 @@ function selectSong(index, initial = false) {
 
   renderSections();
   setPlayingUi(false);
-  setStatus(initial ? "再生する音源を選んでください" : `${song.title}を選択しました`);
+  setStatus(initial ? "最初に音楽フォルダを選んでください" : `${song.title}を選択しました`);
 }
 
 async function startPlayback(label) {
+  if (folderHasBeenSelected && !localAudioSources.has(activeSong().id)) {
+    setPlayingUi(false);
+    setStatus(`${musicFileName(activeSong())}が選択したフォルダに見つかりません`);
+    return;
+  }
+
   try {
     await audio.play();
     setPlayingUi(true);
@@ -313,6 +339,44 @@ audio.addEventListener("error", () => {
   setStatus("musicフォルダの音源を確認してください");
 });
 
+function loadMusicFolder(files) {
+  if (!files.length) return;
+
+  audio.pause();
+  objectUrls.forEach((url) => URL.revokeObjectURL(url));
+  objectUrls = [];
+  localAudioSources.clear();
+
+  const selectedFiles = new Map(
+    Array.from(files).map((file) => [normalizeFileName(file.name), file]),
+  );
+
+  SONGS.forEach((song) => {
+    const file = selectedFiles.get(normalizeFileName(musicFileName(song)));
+    if (!file) return;
+    const objectUrl = URL.createObjectURL(file);
+    localAudioSources.set(song.id, objectUrl);
+    objectUrls.push(objectUrl);
+  });
+
+  folderHasBeenSelected = true;
+  const count = localAudioSources.size;
+  folderResult.textContent = count === SONGS.length
+    ? "12曲すべて読み込み済みです"
+    : `${count}曲読み込み済み／全${SONGS.length}曲`;
+  folderResult.classList.toggle("ready", count === SONGS.length);
+  folderResult.classList.toggle("warning", count !== SONGS.length);
+
+  selectSong(activeSongIndex, true);
+  setStatus(
+    count === SONGS.length
+      ? "12曲を読み込みました。再生できます"
+      : count > 0
+        ? `${count}曲を読み込みました。不足している曲名を確認してください`
+        : "番号付きの音楽ファイルが見つかりませんでした",
+  );
+}
+
 fullTrack.addEventListener("click", selectFullTrack);
 mainPlay.addEventListener("click", togglePlayback);
 songSelect.addEventListener("change", () => selectSong(Number(songSelect.value)));
@@ -321,6 +385,15 @@ nextSong.addEventListener("click", () => selectSong(activeSongIndex + 1));
 seekbar.addEventListener("input", () => seekTo(Number(seekbar.value)));
 document.querySelector("#back").addEventListener("click", () => seekTo(audio.currentTime - 10));
 document.querySelector("#forward").addEventListener("click", () => seekTo(audio.currentTime + 10));
+musicFolderButton.addEventListener("click", () => musicFolderInput.click());
+musicFolderInput.addEventListener("change", () => {
+  loadMusicFolder(musicFolderInput.files);
+  musicFolderInput.value = "";
+});
+
+window.addEventListener("beforeunload", () => {
+  objectUrls.forEach((url) => URL.revokeObjectURL(url));
+});
 
 document.addEventListener("keydown", (event) => {
   if (event.code !== "Space" || ["INPUT", "BUTTON", "TEXTAREA"].includes(event.target.tagName)) return;

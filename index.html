@@ -16,6 +16,30 @@
           <span class="ready">READY</span>
         </header>
 
+        <section class="folder-loader" aria-labelledby="folder-loader-title">
+          <div class="folder-loader-copy">
+            <p class="eyebrow">YOUR MUSIC</p>
+            <h2 id="folder-loader-title">音楽フォルダを読み込む</h2>
+            <p>画像の12曲が入ったフォルダを選んでください。音楽は外部へ送信されません。</p>
+          </div>
+
+          <input
+            class="folder-input"
+            id="music-folder-input"
+            type="file"
+            accept="audio/*,.mp3,.m4a,.wav,.ogg"
+            webkitdirectory
+            directory
+            multiple
+          />
+          <button class="folder-pick-button" id="music-folder-button" type="button">
+            <span aria-hidden="true">♪</span>音楽フォルダを選ぶ
+          </button>
+          <p class="folder-result" id="folder-result" role="status" aria-live="polite">
+            未選択です。最初に一度だけ選んでください
+          </p>
+        </section>
+
         <section class="song-picker" aria-labelledby="song-picker-title">
           <div class="song-picker-title">
             <p class="eyebrow">SONG SELECT</p>
